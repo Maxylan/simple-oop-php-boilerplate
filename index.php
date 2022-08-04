@@ -130,4 +130,3 @@ define('CONFIGURED',  true);
 // "Direct" the user to the proper page based on the incomming request.
 // Simply loads a file with "require".
 $app->routes()->direct();
-$app->db()->query('This looks good.')->execute();
