@@ -136,6 +136,7 @@ class DatabaseConnection {
      *                          additional parameters passed to the
      *                          function (used in order passed).
      * @since   1.0.0a
+     * @return  DatabaseConnection
      */
     public function query( string $query, ...$params ) {
         global $app;
@@ -168,8 +169,10 @@ class DatabaseConnection {
      *                          first entry in the array $params.
      * @since   1.0.0a
      */
-    public function execute( string $query, array $params = array() ) {
-        if (!$this->db_query) return;
+    public function execute() {
+        global $app;
+        if (!$this->db_query) throw $app->gracefully('Caught attempt to execute a query when there\'s no query prepared.');
+        if (!DatabaseConnection::$Connected) throw $app->gracefully('Caught attempt to execute a query without being connected to a database.');
         
         // Execute query.
 
