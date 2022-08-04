@@ -111,6 +111,7 @@ $app = null;
 
 try {
     require_once ABSPATH . PREFIX . 'configuration' . CLASS_SUFFIX;
+    $app = new ApplicationConfiguration();
 } catch (Exception $e) {
     echo '<strong>'.$e->getMessage().'</strong>';
     echo $e->getFile().' : '.$e->getLine();
@@ -126,3 +127,6 @@ try {
  */
 define('CONFIGURED',  true);
 
+// "Direct" the user to the proper page based on the incomming request.
+// Simply loads a file with "require".
+$app->routes()->direct();

@@ -168,7 +168,5 @@ class ApplicationConfiguration {
     public function routes() {
         return ApplicationConfiguration::$routes;
     }
-    
-}
 
-$app = new ApplicationConfiguration();
+}
