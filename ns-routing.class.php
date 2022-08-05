@@ -157,7 +157,7 @@ class Routing {
         );
 
         return $id;
-        
+
     }
 
     /**
@@ -236,7 +236,9 @@ class Routing {
             }
         }
 
+        // If no results are found that means no route matches the request. 404.
         if ( !count($results) ) {
+            http_response_code(404);
             return require ABSPATH . CONTENT . '404' . SUFFIX;
         }
 
