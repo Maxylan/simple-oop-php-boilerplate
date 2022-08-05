@@ -1,4 +1,5 @@
-<? 
+<!DOCTYPE html>
+<?php
 /**
  * PHP Application Boilerplate. Replace this text with whatever you wish.
  *
@@ -78,7 +79,7 @@ define('ABSPATH',  __DIR__);
  * 
  * @since   1.0.0a
  */
-define('PREFIX',  'ns-');
+define('PREFIX',  '/ns-');
 
 /**
  * The suffix of PHP files (.php)
@@ -99,7 +100,28 @@ define('CLASS_SUFFIX',  '.class.php');
  * 
  * @since   1.0.0a
  */
-define('CONTENT',  ABSPATH . '/content');
+define('CONTENT', '/content');
+
+/**
+ * The Application's parts directory.
+ * 
+ * @since   1.0.0a
+ */
+define('PAGES', '/pages');
+
+/**
+ * The Application's parts directory.
+ * 
+ * @since   1.0.0a
+ */
+define('PARTS', '/parts');
+
+/**
+ * The Application's default parts directory.
+ * 
+ * @since   1.0.0a
+ */
+define('DEFAULT_PARTS', '/default');
 
 /*== Custom Constants ==*/
 /**
@@ -117,18 +139,31 @@ define('DEBUG_SHOW_ERRORS', true);
 /*==                  ==*/
 
 /**
- * The global variable acting as an entrypoint into the application.
+ * The global variable acting as the beating heart of the application.
  * @since   1.0.0a
  */
 global $app;
-$app = null;
 
 try {
-    require_once ABSPATH . PREFIX . 'configuration' . CLASS_SUFFIX;
+    include_once ABSPATH . PREFIX . 'configuration' . CLASS_SUFFIX;
+
     $app = new ApplicationConfiguration();
+
 } catch (Exception $e) {
     error_log('Error occured during configuration and the process has been terminated.');
-    $app->display_exception($e);
+
+    error_log('<strong>'.$e->getMessage().'</strong> : '.$e->getFile().' : '.$e->getLine());
+
+    if ($this->debug_show_errors()) {
+        echo '<strong>'.$e->getMessage().'</strong>';
+        echo $e->getFile().' : '.$e->getLine();
+        ?><hr><?php
+        echo $e->getTraceAsString();
+    } else {
+        echo 'A critical error has occured in the server and your process has been terminated.';
+    }
+
+    die;
 }
 
 /**
@@ -154,3 +189,4 @@ try {
     error_log('Error occured during execution and the process has been terminated.');
     $app->display_exception($e);
 }
+?>

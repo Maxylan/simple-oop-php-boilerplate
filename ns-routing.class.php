@@ -1,4 +1,4 @@
-<? 
+<?php 
 // Exit if called directly. Security meassure.
 defined('CONFIG_INITIALIZATION') || exit;
 
@@ -47,7 +47,21 @@ class Routing {
      * already exists.
      * @since   1.0.0a
      */
-    public static readonly bool $Exists;
+    public static array $Current_Pages = array();
+
+    /**
+     * Indicates if an instance of this class 
+     * already exists.
+     * @since   1.0.0a
+     */
+    public static array $Current_Page_IDs = array();
+
+    /**
+     * Indicates if an instance of this class 
+     * already exists.
+     * @since   1.0.0a
+     */
+    public static bool $Exists = false;
 
 
     /**
@@ -57,8 +71,7 @@ class Routing {
     function __construct() {
 
         global $app;
-        if (Routing::$Exists || defined('CONFIGURED')) throw $app->gracefully('Attempt to initialize Duplicate Instances of Routing detected and forcefully stopped.');
-        Routing::$Exists = true;
+        if (defined('CONFIGURED')) throw $app->gracefully('Attempt to initialize Duplicate Instances of Routing detected and forcefully stopped.');
 
     }
 
@@ -238,8 +251,9 @@ class Routing {
 
         // If no results are found that means no route matches the request. 404.
         if ( !count($results) ) {
+            require ABSPATH . CONTENT . PAGES . '/404' . SUFFIX;
             http_response_code(404);
-            return require ABSPATH . CONTENT . '404' . SUFFIX;
+            return;
         }
 
         // Try a few possible combinations of paths to the file in route.
@@ -247,18 +261,84 @@ class Routing {
             $filepath = ''; 
             if ( file_exists($route['file']) ) {
                 $filepath = $route['file'];
+            } else if ( file_exists(ABSPATH . $route['file']) ) {
+                $filepath = ABSPATH . $route['file'];
+            } else if ( file_exists(ABSPATH . $route['file'] . CLASS_SUFFIX) ) {
+                $filepath = ABSPATH . $route['file'] . CLASS_SUFFIX;
+            } else if ( file_exists(ABSPATH . $route['file'] . SUFFIX) ) {
+                $filepath = ABSPATH . $route['file'] . SUFFIX;
             } else if ( file_exists(ABSPATH . CONTENT . $route['file']) ) {
                 $filepath = ABSPATH . CONTENT . $route['file'];
-            } else if ( file_exists(ABSPATH . CONTENT . $route['file'] . CLASS_SUFFIX) ) {
+            }  else if ( file_exists(ABSPATH . CONTENT . $route['file'] . CLASS_SUFFIX) ) {
                 $filepath = ABSPATH . CONTENT . $route['file'] . CLASS_SUFFIX;
             } else if ( file_exists(ABSPATH . CONTENT . $route['file'] . SUFFIX) ) {
                 $filepath = ABSPATH . CONTENT . $route['file'] . SUFFIX;
+            } else if ( file_exists(ABSPATH . CONTENT . PAGES . $route['file']) ) {
+                $filepath = ABSPATH . CONTENT . PAGES . $route['file'];
+            }  else if ( file_exists(ABSPATH . CONTENT . PAGES . $route['file'] . CLASS_SUFFIX) ) {
+                $filepath = ABSPATH . CONTENT . PAGES . $route['file'] . CLASS_SUFFIX;
+            } else if ( file_exists(ABSPATH . CONTENT . PAGES . $route['file'] . SUFFIX) ) {
+                $filepath = ABSPATH . CONTENT . PAGES . $route['file'] . SUFFIX;
             } else {
                 throw $app->gracefully('Routing Manager could not find file "'.$route['file'].'" as specified in route ('.$route['id'].') to destination "'.$route['destination'].'"');
             }
 
+            Routing::$Current_Pages[] = $route['destination'];
+            Routing::$Current_Page_IDs[] = $route['id'];
             include $filepath;
         }
+
+    }
+
+    /**
+     * Determine what part should be used in the HTML document.
+     * @since   1.0.0a
+     */
+    public function html_part( string $part_name, string $part ) {
+        global $app;
+
+        // Establish what the default equivalent of the requested part is.
+        switch( $part ) {
+            case 'head':
+            case 'header':
+            case 'footer':
+                break;
+            default:
+                $app->gracefully('Routing Manager : html_part() - Provided with an invalid HTML part.');
+                break;
+        }
+        $default = ABSPATH . CONTENT . PARTS . DEFAULT_PARTS . '/default-'.$part . SUFFIX;
+
+        // Attempt to find a value for $part_name if there is none.
+        // If no value can be found from what's given in parms or stored
+        // in routes then return previously calculated default part.
+        if ( !$part_name ) {
+            foreach (Routing::$Current_Page_IDs as $id) {
+                if ( isset($this->get_by_id($id)[$part]) ) {
+                    $part_name = $this->get_by_id($id)[$part];
+                    break;
+                }
+            }
+            if ( !$part_name ) {
+                include $default;
+                return;
+            }
+        }
+
+        // Then, determine if part even exists.
+        $filepath = '';
+        if ( file_exists(ABSPATH . CONTENT . PARTS . $part_name) ) {
+            $filepath = ABSPATH . CONTENT . PARTS . $part_name;
+        } else if ( file_exists(ABSPATH . CONTENT . PARTS . $part_name . CLASS_SUFFIX) ) {
+            $filepath = ABSPATH . CONTENT . PARTS . $part_name . CLASS_SUFFIX;
+        } else if ( file_exists(ABSPATH . CONTENT . PARTS . $part_name . SUFFIX) ) {
+            $filepath = ABSPATH . CONTENT . PARTS . $part_name . SUFFIX;
+        } else {
+            include $default;
+            return;
+        }
+
+        include $filepath;
 
     }
 

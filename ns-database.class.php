@@ -1,4 +1,4 @@
-<? 
+<?php 
 // Exit if called directly. Security meassure.
 defined('CONFIG_INITIALIZATION') || exit;
 
@@ -19,25 +19,25 @@ class DatabaseConnection {
      * The Database's name.
      * @since   1.0.0a
      */
-    public readonly string $db_name;
+    public string $db_name;
 
     /**
      * The Database's IP-Address.
      * @since   1.0.0a
      */
-    public readonly string $db_address;
+    public string $db_address;
 
     /**
      * The Collation used by the Database.
      * @since   1.0.0a
      */
-    public readonly string $db_collation;
+    public string $db_collation;
 
     /**
      * The DB user to be used by the Application.
      * @since   1.0.0a
      */
-    public readonly string $db_user;
+    public string $db_user;
 
     /**
      * The Password of the DB user to be used by 
@@ -60,7 +60,7 @@ class DatabaseConnection {
      * the database.
      * @since   1.0.0a
      */
-    public static readonly bool $Connected;
+    public static bool $Connected;
 
 
     /**

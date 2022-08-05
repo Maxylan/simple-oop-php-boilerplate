@@ -1,4 +1,4 @@
-<? 
+<?php 
 /**
  * Configures the application using stored values, definitions and
  * references to other scrtipts.
@@ -67,49 +67,49 @@ class ApplicationConfiguration {
      * The Application's name.
      * @since   1.0.0a
      */
-    public readonly string $name;
+    public string $name;
 
     /**
      * The Application's description.
      * @since   1.0.0a
      */
-    public readonly string $description;
+    public string $description;
 
     /**
      * The Application's author.
      * @since   1.0.0a
      */
-    public readonly string $author;
+    public string $author;
 
     /**
      * The Application-author's website.
      * @since   1.0.0a
      */
-    public readonly string $author_uri;
+    public string $author_uri;
 
     /**
      * The Application's version.
      * @since   1.0.0a
      */
-    public readonly string $version;
+    public string $version;
 
     /**
      * The Application's license.
      * @since   1.0.0a
      */
-    public readonly string $license;
+    public string $license;
 
     /**
      * The License website.
      * @since   1.0.0a
      */
-    public readonly string $license_uri;
+    public string $license_uri;
 
     /**
      * The Routing Engine of the Application.
      * @since   1.0.0a
      */
-    private static readonly Routing $routes;
+    private Routing $routes;
 
     /**
      * Effectively starts execution of the web app.
@@ -130,7 +130,9 @@ class ApplicationConfiguration {
         global $app;
         if ( isset($app) || defined('CONFIGURED') ) throw $this->gracefully('Attempt to initialize Duplicate Instances of ApplicationConfiguration detected and forcefully stopped.');
 
-        ApplicationConfiguration::$routes = new Routing();
+        // Create instance of routing.
+        $this->routes = new Routing();
+        Routing::$Exists = true;
 
     }
 
@@ -166,7 +168,7 @@ class ApplicationConfiguration {
      * @since   1.0.0a
      */
     public function routes() {
-        return ApplicationConfiguration::$routes;
+        return $this->routes;
     }
 
     /**
@@ -212,6 +214,33 @@ class ApplicationConfiguration {
 
         die;
         
+    }
+
+    /**
+     * Fetches the "head" part to be used in the HTML document
+     * from routing.
+     * @since   1.0.0a
+     */
+    public function get_head( string $part_name = '' ) {
+        return $this->routes->html_part( $part_name, 'head' );
+    }
+
+    /**
+     * Fetches the "header" part to be used in the HTML document
+     * from routing.
+     * @since   1.0.0a
+     */
+    public function get_header( string $part_name = '' ) {
+        return $this->routes->html_part( $part_name, 'header' );
+    }
+
+    /**
+     * Fetches the "footer" part to be used in the HTML document
+     * from routing.
+     * @since   1.0.0a
+     */
+    public function get_footer( string $part_name = '' ) {
+        return $this->routes->html_part( $part_name, 'footer' );
     }
 
 }
