@@ -156,6 +156,8 @@ class Routing {
             'id'            => $id
         );
 
+        return $id;
+        
     }
 
     /**
