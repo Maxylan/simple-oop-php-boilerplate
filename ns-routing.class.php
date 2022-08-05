@@ -263,9 +263,7 @@ class Routing {
             // Add prefixed slash to filename if there is none.
             if ( $route['file'][0] != '/' ) $route['file'] = '/' . $route['file'];
 
-            if ( file_exists($route['file']) ) {
-                $filepath = $route['file'];
-            } else if ( file_exists(ABSPATH . $route['file']) ) {
+            if ( file_exists(ABSPATH . $route['file']) ) {
                 $filepath = ABSPATH . $route['file'];
             } else if ( file_exists(ABSPATH . $route['file'] . CLASS_SUFFIX) ) {
                 $filepath = ABSPATH . $route['file'] . CLASS_SUFFIX;
@@ -289,7 +287,7 @@ class Routing {
 
             Routing::$Current_Pages[] = $route['destination'];
             Routing::$Current_Page_IDs[] = $route['id'];
-            include $filepath;
+            require $filepath;
         }
 
     }
