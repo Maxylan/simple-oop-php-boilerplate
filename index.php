@@ -154,7 +154,7 @@ try {
 
     error_log('<strong>'.$e->getMessage().'</strong> : '.$e->getFile().' : '.$e->getLine());
 
-    if ($this->debug_show_errors()) {
+    if (defined('DEBUG_SHOW_ERRORS') && DEBUG_SHOW_ERRORS) {
         echo '<strong>'.$e->getMessage().'</strong>';
         echo $e->getFile().' : '.$e->getLine();
         ?><hr><?php
@@ -182,7 +182,7 @@ try {
 
     // Last thing you should do is call $app->routes()->direct();
     // This "Directs" the user to the proper page based on the 
-    // incomming request. (Simply loads a file with "require".)
+    // incomming request. (Simply loads all files with "include".)
     /*==                         ==*/
     $app->routes()->direct();
 } catch (Exception $e) {
