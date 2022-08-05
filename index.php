@@ -101,6 +101,20 @@ define('CLASS_SUFFIX',  '.class.php');
  */
 define('CONTENT',  ABSPATH . '/content');
 
+/*== Custom Constants ==*/
+/**
+ * Add custom constants here to effect the application in different ways.
+ * One example constant has been added below and it's "DEBUG_ENABLED".
+ * For now, there's only one other constant you can add and it's
+ * "DEBUG_SHOW_ERRORS", but expect more to come if I continue developing
+ * this boilerplate.
+ * @since   1.0.0a
+ */
+
+define('DEBUG_ENABLED', true);
+define('DEBUG_SHOW_ERRORS', true);
+
+/*==                  ==*/
 
 /**
  * The global variable acting as an entrypoint into the application.
@@ -113,11 +127,8 @@ try {
     require_once ABSPATH . PREFIX . 'configuration' . CLASS_SUFFIX;
     $app = new ApplicationConfiguration();
 } catch (Exception $e) {
-    echo '<strong>'.$e->getMessage().'</strong>';
-    echo $e->getFile().' : '.$e->getLine();
-    ?><hr><?php
-    echo $e->getTraceAsString();
-    die;
+    error_log('Error occured during configuration and the process has been terminated.');
+    $app->display_exception($e);
 }
 
 /**
@@ -127,6 +138,19 @@ try {
  */
 define('CONFIGURED',  true);
 
-// "Direct" the user to the proper page based on the incomming request.
-// Simply loads a file with "require".
-$app->routes()->direct();
+try {
+    /*== Application Entry Point ==*/
+    // Add your code here!
+
+    // Add the route "/test"
+    $app->routes()->add('/test', 'test.php');
+
+    // Last thing you should do is call $app->routes()->direct();
+    // This "Directs" the user to the proper page based on the 
+    // incomming request. (Simply loads a file with "require".)
+    /*==                         ==*/
+    $app->routes()->direct();
+} catch (Exception $e) {
+    error_log('Error occured during execution and the process has been terminated.');
+    $app->display_exception($e);
+}

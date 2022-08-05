@@ -169,4 +169,49 @@ class ApplicationConfiguration {
         return ApplicationConfiguration::$routes;
     }
 
+    /**
+     * Returns if the application is in debugging mode.
+     * Constant: DEBUG_ENABLED
+     * @since   1.0.0a
+     * @return  bool
+     */
+    public function debug() {
+        return (defined('DEBUG_ENABLED') && DEBUG_ENABLED);
+    }
+
+    /**
+     * Returns if the application should show errors or not.
+     * Constant: DEBUG_SHOW_ERRORS
+     * @since   1.0.0a
+     * @return  bool
+     */
+    public function debug_show_errors() {
+        return (defined('DEBUG_SHOW_ERRORS') && DEBUG_SHOW_ERRORS);
+    }
+
+    /**
+     * Displays an exception if DEBUG_SHOW_ERRORS == true.
+     * If not, it displays a generic message and logs the
+     * exception.
+     * 
+     * This always ends execution with die.
+     * @since   1.0.0a
+     */
+    public function display_exception(Exception $e) {
+
+        error_log('<strong>'.$e->getMessage().'</strong> : '.$e->getFile().' : '.$e->getLine());
+
+        if ($this->debug_show_errors()) {
+            echo '<strong>'.$e->getMessage().'</strong>';
+            echo $e->getFile().' : '.$e->getLine();
+            ?><hr><?php
+            echo $e->getTraceAsString();
+        } else {
+            echo 'A critical error has occured in the server and your process has been terminated.';
+        }
+
+        die;
+        
+    }
+
 }
