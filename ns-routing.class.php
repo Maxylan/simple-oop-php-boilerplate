@@ -237,7 +237,7 @@ class Routing {
         // them into $results based on priority.
         foreach( $this->routes as $route ) {
             if ( $route['destination'] == $request ) {
-                if (!count($results)) $matched[] = $route;
+                if (!count($results)) $results[] = $route;
                 else {
                     $splice_index = 0;
                     foreach( $results as $stored_route ) {
@@ -259,6 +259,10 @@ class Routing {
         // Try a few possible combinations of paths to the file in route.
         foreach ($results as $route) {
             $filepath = ''; 
+
+            // Add prefixed slash to filename if there is none.
+            if ( $route['file'][0] != '/' ) $route['file'] = '/' . $route['file'];
+
             if ( file_exists($route['file']) ) {
                 $filepath = $route['file'];
             } else if ( file_exists(ABSPATH . $route['file']) ) {
@@ -275,7 +279,7 @@ class Routing {
                 $filepath = ABSPATH . CONTENT . $route['file'] . SUFFIX;
             } else if ( file_exists(ABSPATH . CONTENT . PAGES . $route['file']) ) {
                 $filepath = ABSPATH . CONTENT . PAGES . $route['file'];
-            }  else if ( file_exists(ABSPATH . CONTENT . PAGES . $route['file'] . CLASS_SUFFIX) ) {
+            } else if ( file_exists(ABSPATH . CONTENT . PAGES . $route['file'] . CLASS_SUFFIX) ) {
                 $filepath = ABSPATH . CONTENT . PAGES . $route['file'] . CLASS_SUFFIX;
             } else if ( file_exists(ABSPATH . CONTENT . PAGES . $route['file'] . SUFFIX) ) {
                 $filepath = ABSPATH . CONTENT . PAGES . $route['file'] . SUFFIX;
